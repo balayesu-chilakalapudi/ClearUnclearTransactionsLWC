@@ -27,7 +27,7 @@ handleNavigate(event){
     });
    }
 ```
-Below is the HTML part of data-label which is used in java as event.currentTarget.dataset.label
+Below is the HTML part of data-label which is used in javascript as event.currentTarget.dataset.label
 
 ```
 <td key={subval1.ColumnHeader1}>
@@ -36,4 +36,47 @@ Below is the HTML part of data-label which is used in java as event.currentTarge
   </div>
 </td>
 ```
+To receive the url parameters use the below code
+
+```
+@wire(CurrentPageReference)
+getPageReferenceParameters(currentPageReference) {
+ if (currentPageReference) {
+    console.log(currentPageReference);
+   // this.glaccountId = currentPageReference.attributes.recordId || null;
+   // let attributes = currentPageReference.attributes;
+    this.glaccountId = currentPageReference.state.c__glaccountId;  
+    this.displayColumn=currentPageReference.state.c__displayColumn;   
+    this.startDate=currentPageReference.state.c__startDate;   
+ }
+}
+```
+
+Make the pagination dynamic by using the child LWC components pagination1LWC, pagination2LWC like below
+
+```
+<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+<tbody>
+<template for:each={clearedTransactions} for:item="ct">
+    <tr key={ct.Id} class="slds-line-height_reset">
+        <td scope="col">
+            <lightning-input class="slds-p-left_xx-large" type="checkbox"
+                data-id="cleared" label="" value={ct.Id}
+                onchange={handleClearedBox}></lightning-input>
+        </td>
+        <td scope="col">{ct.Customer_Payee__c}</td>
+        <td scope="col">{ct.GFERP__Document_Date__c}</td>
+        <td scope="col">{ct.GFERP__Amount__c}</td>
+        <td scope="col"></td>
+        <td scope="col"></td>
+    </tr>
+</template>
+</tbody>
+</table>
+<div slot="footer" class="slds-var-m-vertical_medium">
+  <c-clear-transaction-pagination records={dataObj.clearedTransactions} record-size="5"
+      onupdate={updateClearedTransactions}></c-clear-transaction-pagination>
+</div>
+```
+
 
