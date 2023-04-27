@@ -1,0 +1,303 @@
+<template>
+	<!-- <template> 
+	<lightning-spinner if:true={showSpinner} alternative-text="Loading" size="medium" variant="brand">
+	</lightning-spinner>
+</template> -->
+	<template if:true={isShowToast}>
+		<div class="slds-notify_container slds-is-sticky">
+			<div class="slds-notify slds-notify_toast slds-theme_success" role="status">
+				<span class="slds-assistive-text">{toastVariant}</span>
+				<span
+					class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top"
+					title="Description of icon when needed">
+					<svg class="slds-icon slds-icon_small" aria-hidden="true">
+						<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#success"></use>
+					</svg>
+				</span>
+				<div class="slds-notify__content">
+					<h2 class="slds-text-heading_small ">{toastTitle}<br />
+					</h2>
+					<h3>{toastMessage}</h3>
+				</div>
+				<div class="slds-notify__close">
+					<button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+						onclick={closeToast}>
+						<svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+							<use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#close"></use>
+						</svg>
+						<span class="slds-assistive-text">Close</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</template>
+	<template if:true={showSpinner}>
+		<lightning-spinner alternative-text="Loading" size="medium" variant="brand">
+		</lightning-spinner>
+	</template>
+	<template if:true={isModalOpen}>
+		<!-- Modal/Popup Box LWC starts here -->
+		<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+			aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<!-- Modal/Popup Box LWC header here -->
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+						title="Close" onclick={closeModal}>
+						<lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+							size="small"></lightning-icon>
+						<span class="slds-assistive-text">Close</span>
+					</button>
+					<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete Report(s)</h2>
+				</header>
+				<!-- Modal/Popup Box LWC body starts here -->
+				<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+					<p><b>Are you sure you want to delete the report(s)? Deleting multiple reports could take a few
+							minutes.</b>
+					</p>
+				</div>
+				<!-- Modal/Popup Box LWC footer starts here -->
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" onclick={closeModal} title="No">No</button>
+					<button class="slds-button slds-button_brand" onclick={submitDetails} title="Yes">Yes</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+	<lightning-card variant="Narrow" title="Profilt & Loss Reports" icon-name="standard:insights">
+		<lightning-breadcrumbs class="slds-p-left_medium">
+			<lightning-breadcrumb label="Back to report list" onclick={handleTabChange}>
+			</lightning-breadcrumb>
+		</lightning-breadcrumbs>
+		<div class="slds-grid slds-wrap slds-p-left_medium">
+			<div class="slds-grid slds-size_1-of-1">
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="reportPeriod"
+					label="Report Period" placeholder="This-year-to-date" options={reportPeriodOption}
+					onchange={handlePeriodChange}>
+				</lightning-combobox>
+			</div>
+			<div class="slds-grid slds-size_1-of-1">
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5"
+					name="displayColumn" label="Display columns by" placeholder="Total Only"
+					options={displayColumnOptionPL} onchange={handleDiplayColmunByChange}></lightning-combobox>
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="progress"
+					label="Show non-zero or active only" placeholder="Active rows/active columns"
+					options={reportPeriodOption} onchange={handleChange}></lightning-combobox>
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="progress"
+					label="Compare another period" placeholder="Select period" options={reportPeriodOption}
+					onchange={handleChange}></lightning-combobox>
+				<lightning-button class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5 slds-m-top_large"
+					variant="neutral" label="Run Report" title="titleName" onclick={handleRunReport}></lightning-button>
+			</div>
+		</div>
+		<!-- <table>
+			<thead>
+				<tr>
+					<th>Type</th>
+					<template for:each={columnData} for:item="column">
+						<th key={column}>{column}</th>
+					</template>
+				</tr>
+			</thead>
+			<tbody> -->
+
+	<!-- <lightning-tree-grid hide-checkbox-column = 'true'
+				expanded-rows ={expandedRows}
+				columns={tempCol}
+				data={tempRow}
+				key-field="Name"
+				min-column-width="80"
+			></lightning-tree-grid>  -->
+			<!-- Kartik logic-->
+		<template if:true={showReport}>
+
+			<table 
+				class="slds-table slds-table_bordered slds-table_edit  slds-table_resizable-cols "
+				>
+				<thead>
+					<!-- <tr class="slds-line-height_reset">
+
+						<th aria-label="Account Name" aria-sort="none"
+							class="slds-is-resizable" scope="col">
+								<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+									<span class="slds-truncate" title="Account Name">Report Type</span>
+								</div>
+			
+						</th>
+
+						<template for:each={columnData} for:item="column">
+							<th key={column} aria-label="Account Name" aria-sort="none"
+							class="slds-is-resizable" scope="col">
+								<span class="slds-assistive-text">Sort by: </span>
+								<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+									<span class="slds-truncate" title="Account Name">{column}</span>
+									<span class="slds-icon_container slds-icon-utility-arrowdown">
+										<svg class="slds-icon slds-icon-text-default slds-is-sortable__icon "
+											aria-hidden="true">
+											<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown">
+											</use>
+										</svg>
+									</span>
+								</div>
+						</th>
+						</template>
+
+					</tr> -->
+				</thead>
+				<tbody>
+					<th aria-label="Account Name" aria-sort="none"
+					class="slds-is-resizable" scope="col">
+						<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+							<span class="slds-truncate" title="Account Name"><b>Report Type</b></span>
+						</div>
+	
+				</th>
+
+				<template for:each={columnData} for:item="column">
+					<th key={column} aria-label="Account Name" aria-sort="none"
+					class="slds-is-resizable" scope="col">
+						<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+							<span class="slds-truncate" title={column}><b>{column}</b></span>
+						</div>
+				</th>
+				</template>
+
+			</tr>
+					<!-- <template for:each={reportData} for:item="mapItem" for:index="index">
+						<tr key={mapItem.type} aria-expanded="true" aria-level="1" aria-posinset="2" aria-selected="false" aria-setsize="4"
+						class="slds-hint-parent" data-index={index} data-type={mapItem.type} onclick={displayChild}>
+						<th class="slds-tree__item" data-label="Account Name" scope="row">
+							<button class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small"
+								aria-hidden="true" tabindex="-1" title="Collapse Acme Corporation">
+								<lightning-icon icon-name="utility:right" variant="minimize_window" size="x-small"></lightning-icon>
+								<span class="slds-assistive-text">Collapse Acme Corporation</span>
+							</button>
+							<div class="slds-truncate" title={mapItem.type}>
+								{mapItem.type}
+							</div>
+						</th>
+						</tr>
+						<template if:true = {mapItem.showData} key={mapItem.type} for:each={mapItem.subTypeWrapperList} for:item="mapItemInner1">
+							<tr key={mapItemInner1.type} aria-expanded="true" aria-level="1" aria-posinset="2" aria-selected="false" aria-setsize="4"
+							class="slds-hint-parent">
+							<td data-label={mapItemInner1.type} role="gridcell">{mapItemInner1.type}</td>
+							</tr>
+							
+							<template for:each={mapItemInner1.financialDataList} for:item="finData">
+							
+								 <td key={finData.RowLabel} role="gridcell">{finData.RowLabel}</td> 
+							
+								<td key={finData.RowLabel} role="gridcell">{finData.Amount}</td>
+							
+								</template>
+							
+						</template>
+						</template> -->
+
+					<template if:true={showRepData} for:each={tempWrapObj} for:item="prop"  for:index="index">
+						<tr key={prop.key} >
+							
+							<td colspan={prop.colspan}>
+								
+							  <template if:true={prop.isFormula}>
+								<h1><lightning-icon icon-name="utility:right"  if:false={prop.showCollapse} variant="minimize_window" data-label="parent" size="x-small" onclick={hideChild}></lightning-icon><b  if:true={prop.isFormula}>{prop.key} </b> </h1>
+							  </template>
+							  <template if:false={prop.isFormula}>
+							  <h1><lightning-icon icon-name="utility:right"  if:false={prop.showCollapse} variant="minimize_window" data-label="parent" size="x-small" onclick={hideChild}></lightning-icon>{prop.key} </h1>
+							</template>
+							 
+							</td>
+							<td if:true={prop.isFormula}>
+								<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+									<span class="slds-truncate" if:false={prop.isClickable} title={prop.key} >{prop.Amount}</span>
+									</div>
+							</td>
+						</tr>
+						<template if:true={showParent}>
+							
+							<template  for:each={prop.value} for:item="val">
+								 <template if:true={prop.hasChildObj}>
+									<!-- True -->
+									<tr key={val.Subkey} >
+										
+										<td >&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<lightning-icon key={prop} data-label="child" icon-name="utility:right" variant="minimize_window" size="x-small" onclick={hideChild}></lightning-icon>{val.Subkey}</td>
+										</tr>
+								 <template if:true={showChild}  for:each={val.Subvalue} for:item="subval">
+									<tr key={subval.Subkey1} >
+										<td>
+											
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<lightning-icon  data-label="subChild" icon-name="utility:right" variant="minimize_window" size="x-small" onclick={hideChild}></lightning-icon> {subval.Subkey1}
+										</td>
+										
+									</tr> 
+									<template if:false={subval.hasSubChildObj}>
+									
+										<template if:true={showSubChild} for:each={subval.Subvalue1} for:item="subval1">
+										<template if:true={subval1.showLabel}>
+											<td key={subval1.ColumnHeader1}>
+												<h2 key={val}>
+													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{subval1.RowLabel}</h2>
+											</td>
+										</template>
+											<td key={subval1.ColumnHeader1}>
+												<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+												<span class="slds-truncate" title={subval1.RowLabel} data-id={subval1.Id} data-label={subval1.ColumnHeader1} onclick={handleNavigate}><a>{subval1.Amount}</a></span>
+												</div>
+											</td>
+											
+										
+										</template>
+									
+									</template>
+								</template> 
+								
+							
+							</template>
+							 <template if:false={prop.hasChildObj}>
+								<tr key={val.Name}>
+								<td >										
+									<h2 >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{val.Name}</h2>
+								</td>
+								<template for:each={val.Value} for:item="rec">
+									<td key={rec.RowLabel}>
+										<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+											<span class="slds-truncate" title={val.RowLabel} data-id={rec.Id} data-label={rec.ColumnHeader1} onclick={handleNavigate}><a>{rec.Amount}</a></span>
+											</div>
+										
+									</td>
+								</template>
+							</tr>
+								<!-- <template if:true={val.showLabel}>
+									<td  key={val.Subkey}>
+										<h2 key={val}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{val.RowLabel}</h2>
+									</td>
+									<td key={val.Subkey}>
+										<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+											<span class="slds-truncate" title={val.RowLabel} data-id={val.Id} onclick={handleNavigate}><a>{val.Amount}</a></span>
+											</div>
+										
+									</td>
+									</template>
+									<template if:false={val.showLabel}>
+										<td key={val.Subkey}>
+											<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+												<span class="slds-truncate" title={val.RowLabel} data-id={val.Id} onclick={handleNavigate}><a>{val.Amount}</a></span>
+												</div>
+											
+										</td>							
+									</template> -->
+							</template> 
+							</template>	
+						</template>
+					</template>		
+
+				</tbody>
+			</table>
+		</template>
+		<!-- Kartik logic end-->
+		<!-- </tbody>
+		</table> -->
+	</lightning-card>
+
+</template>

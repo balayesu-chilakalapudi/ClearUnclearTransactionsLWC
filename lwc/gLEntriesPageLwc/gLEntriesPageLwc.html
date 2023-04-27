@@ -1,0 +1,36 @@
+<template>
+    <div >
+        <!--
+        <div class="slds-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-opportunity" title="GL Entries">
+                                <lightning-icon icon-name="action:new_note" alternative-text="New note"
+                                    title="New note"></lightning-icon>
+                                <span class="slds-assistive-text">GL Entries</span>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate"
+                                            title="GL Entries">GL Entries</span>
+                                    </h1>
+                                </div>
+                            </div>
+                            <p class="slds-page-header__name-meta"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    -->
+        <lightning-datatable key-field="id" columns={columns} data={data} hide-checkbox-column
+            default-sort-direction={defaultSortDirection} sorted-direction={sortDirection} sorted-by={sortedBy}
+            onsort={onHandleSort}>
+        </lightning-datatable>
+    </div>
+</template>

@@ -1,0 +1,58 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-4" style="padding:1%;text-align:left">
+            {start}-{end} of {displayRecordSize} Total {totalRecordSize} records
+        </div>
+        <div class="slds-col slds-size_2-of-4" style="padding:1%;">
+            <lightning-button label="" icon-name="utility:jump_to_left" onclick={firstHandler}
+                disabled={disableFirst}></lightning-button>
+            &nbsp;&nbsp;
+            <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={previousHandler}
+                disabled={disablePrevious}></lightning-button>
+            &nbsp;&nbsp;
+            <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler}
+                disabled={disableNext}></lightning-button>
+            &nbsp;&nbsp;
+            <lightning-button label="" icon-name="utility:jump_to_right" icon-position="right" onclick={lastHandler}
+                disabled={disableNext}></lightning-button>
+        </div>
+        <div class="slds-col slds-size_1-of-4" style="padding:1%;text-align:right">
+            Page {currentPage} of {totalPage}
+        </div>
+    </div>
+    <!--
+    <lightning-layout>
+        <lightning-layout-item>
+            <lightning-button label="First" 
+            icon-name="utility:chevronleft"
+            onclick={firstHandler}
+            disabled={disableFirst}></lightning-button>
+            &nbsp;&nbsp;
+        </lightning-layout-item>
+        <lightning-layout-item>
+            <lightning-button label="Previous" 
+            icon-name="utility:chevronleft"
+            onclick={previousHandler}
+            disabled={disablePrevious}></lightning-button>
+        </lightning-layout-item>
+        <lightning-layout-item flexibility="grow">
+            <p class="slds-text-align_center">Displaying {currentPage} of {totalPage} Page</p>
+        </lightning-layout-item>
+        <lightning-layout-item>
+            <lightning-button label="next" 
+            icon-name="utility:chevronright"
+            icon-position="right"
+            onclick={nextHandler}
+            disabled={disableNext}></lightning-button>
+            &nbsp;&nbsp;
+        </lightning-layout-item>
+        <lightning-layout-item>
+            <lightning-button label="Last" 
+            icon-name="utility:chevronright"
+            icon-position="right"
+            onclick={lastHandler}
+            disabled={disableNext}></lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+    -->
+</template>

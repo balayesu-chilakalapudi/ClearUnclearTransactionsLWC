@@ -1,0 +1,228 @@
+<template>
+    <template if:true={recordId}>
+        <div style="margin:0.5%">
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="action:approval" alternative-text="Approved"
+                                    title="Approved"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <p class="slds-page-header__name-meta">Balance Sheet Account
+                                            Reconciliation
+                                        </p>
+                                    </div>
+                                </div>
+                                <h1>
+                                    <span class="slds-page-header__title slds-truncate"
+                                        title="Clear and Unclear Transactions">Clear and Unclear Transactions</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                    <lightning-button label="Back" onclick={closeAction}></lightning-button>
+                </div>
+            </div>
+
+            <br />
+            <template if:true={dataObj}>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-1" style="padding:0.5%">
+                        <div style="border:0.5px solid gray;padding:0.5%">
+                            <span class="heading" style="padding:1%">Balance Sheet Account Reconciliation
+                                Information</span>
+                            <hr style="margin:0.5% 0%" />
+                            <lightning-record-edit-form object-api-name="Bank_Reconciliation__c" record-id={recordId}>
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_1-of-2" style="padding:1%;">
+                                        <!--
+                                {dataObj.Bank_Reconciliation.Bank_Account__r.Name}
+                                 Calculated Ending Balance:<br />
+                                {dataObj.Bank_Reconciliation.Calculated_Ending_Balance__c}
+                                 End Date:<br />
+                                {dataObj.Bank_Reconciliation.End_Date__c}
+                                Beginning Balance:<br />
+                                {dataObj.Bank_Reconciliation.Beginning_Balance__c}
+                                 Ending Balance:<br />
+                                {dataObj.Bank_Reconciliation.Ending_Balance__c}
+                                 Cleared Amount:<br />
+                                {dataObj.Bank_Reconciliation.Cleared_Amount__c}
+                                 Ending Balance Difference:<br />
+                                {dataObj.Bank_Reconciliation.Ending_Balance_Difference__c}
+                                -->
+                                        <lightning-output-field field-name="Bank_Account__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                        <lightning-output-field field-name="Calculated_Ending_Balance__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                        <lightning-output-field field-name="End_Date__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                        <lightning-output-field field-name="Beginning_Balance__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                        <lightning-output-field field-name="Ending_Balance__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2" style="padding:1%;">
+                                        <lightning-output-field field-name="Cleared_Amount__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                        <lightning-output-field field-name="Ending_Balance_Difference__c"
+                                            variant="label-stacked"></lightning-output-field>
+                                        <hr />
+                                    </div>
+                                </div>
+                            </lightning-record-edit-form>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="slds-grid slds-wrap" style="">
+                    <div class="slds-col slds-size_1-of-2" style="padding:0.5%">
+                        <div style="border:0.5px solid gray;padding:0.5%">
+                            <span class="heading">Cleared Transactions</span>
+                            &nbsp;&nbsp;
+                            <lightning-button label="Unclear Selected"
+                                onclick={dosaveClearBoxesSelected}></lightning-button>
+                            <hr style="margin:0.5% 0%" />
+                            <br />
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><lightning-input class="slds-p-left_xx-large" type="checkbox"
+                                                data-id="selectAllCleared" label=""
+                                                onchange={handleSelectAllCleared}></lightning-input></th>
+                                        <th scope="col">
+                                            <a data-id="Customer_Payee__c" onclick={sortCleared}>
+                                                Customer/Payee
+                                            </a>
+                                        </th>
+                                        <th scope="col">
+                                            <a data-id="GFERP__Document_Date__c" onclick={sortCleared}>
+                                                Date
+                                            </a>
+                                        </th>
+                                        <th scope="col">
+                                            <a data-id="GFERP__Amount__c" onclick={sortCleared}>
+                                                Amount
+                                            </a>
+                                        </th>
+                                        <th scope="col">Reference</th>
+                                        <th scope="col">Source</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={clearedTransactions} for:item="ct">
+                                        <tr key={ct.Id} class="slds-line-height_reset">
+                                            <td scope="col">
+                                                <lightning-input class="slds-p-left_xx-large" type="checkbox"
+                                                    data-id="cleared" label="" value={ct.Id}
+                                                    onchange={handleClearedBox}></lightning-input>
+                                            </td>
+                                            <td scope="col">{ct.Customer_Payee__c}</td>
+                                            <td scope="col">{ct.GFERP__Document_Date__c}</td>
+                                            <td scope="col">{ct.GFERP__Amount__c}</td>
+                                            <td scope="col"></td>
+                                            <td scope="col"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                            <div slot="footer" class="slds-var-m-vertical_medium">
+                                <c-clear-transaction-pagination records={dataObj.clearedTransactions} record-size="5"
+                                    onupdate={updateClearedTransactions}></c-clear-transaction-pagination>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2" style="padding:0.5%;">
+                        <div style="padding:0.5%;border:0.5px solid gray">
+                            <span class="heading"> Uncleared Transactions </span>
+                            &nbsp;&nbsp;
+                            <lightning-button label="Search" onclick={doEndDateSearch}></lightning-button>&nbsp;
+                            <lightning-button label="Clear Selected"
+                                onclick={dosaveUnclearBoxesSelected}></lightning-button>
+                            <hr style="margin:0.5% 0%" />
+                            <br />
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2" style="padding:1%;text-align:left">
+                                    <lightning-record-edit-form object-api-name="Bank_Reconciliation__c">
+                                        <lightning-input-field field-name="End_Date__c" variant="label-inline"
+                                            style="width: 300px;" onchange={readEndDate}></lightning-input-field>
+                                    </lightning-record-edit-form>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2" style="padding:1%;">
+                                    <table>
+                                        <tr>
+                                            <td style="text-align:right">Search&nbsp;</td>
+                                            <td> <lightning-input type="text" label="" variant="label-hidden" style=""
+                                                    onchange={doSearch}></lightning-input></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><lightning-input class="slds-p-left_xx-large" type="checkbox"
+                                                data-id="selectAllUncleared" label=""
+                                                onchange={handleSelectAllUncleared}></lightning-input>
+                                        </th>
+                                        <th scope="col">
+                                            <a data-id="Customer_Payee__c" onclick={sort}>
+                                                Customer/Payee
+                                            </a>
+                                        </th>
+                                        <th scope="col">
+                                            <a data-id="GFERP__Document_Date__c" onclick={sort}>
+                                                Date
+                                            </a>
+                                        </th>
+                                        <th scope="col">
+                                            <a data-id="GFERP__Amount__c" onclick={sort}>
+                                                Amount
+                                            </a>
+                                        </th>
+                                        <th scope="col">Reference</th>
+                                        <th scope="col">Source</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template if:true={unclearedTransactions}>
+                                        <template for:each={unclearedTransactions} for:item="ct">
+                                            <tr key={ct.Id} class="slds-line-height_reset">
+                                                <td scope="col">
+                                                    <lightning-input class="slds-p-left_xx-large" type="checkbox"
+                                                        data-id="uncleared" label="" value={ct.Id}
+                                                        onchange={handleUnclearedBox}></lightning-input>
+                                                </td>
+                                                <td scope="col">{ct.Customer_Payee__c}</td>
+                                                <td scope="col">{ct.GFERP__Document_Date__c}</td>
+                                                <td scope="col">{ct.GFERP__Amount__c}</td>
+                                                <td scope="col"></td>
+                                                <td scope="col"></td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                </tbody>
+                            </table>
+
+                            <div slot="footer" class="slds-var-m-vertical_medium">
+                                <c-unclear-transaction-pagination records={dataObj.unclearedTransactions} record-size="5"
+                                    onupdate={updateUnclearedTransactions}></c-unclear-transaction-pagination>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+</template>

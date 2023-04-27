@@ -1,0 +1,34 @@
+li.slds-vertical-tabs__nav-item{
+	transition: box-shadow .2s;
+	background: #fff;
+}
+li.slds-vertical-tabs__nav-item:hover {
+  box-shadow: 0 0 11px rgba(33,33,33,.2); 
+}
+ul.slds-vertical-tabs__nav{
+	background-color: white !important;
+	border: none;
+    border-top: 1px solid #e5e5e5 !important;
+}
+
+p.slds-vertical-tabs__link:hover{
+	background: #e0e0e040 !important;
+}
+div.slds-vertical-tabs{
+	overflow: unset !important;
+	border: none;
+}
+
+input.star {
+  display: none;
+}
+input.star:checked + label:before {
+  color: greenyellow;
+}
+input.star + label:before {
+  content: '\2605';
+  font-size: 24px;
+}
+.no-break {
+    margin-top: 0;
+  }

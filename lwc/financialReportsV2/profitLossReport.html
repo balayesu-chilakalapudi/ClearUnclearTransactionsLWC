@@ -1,0 +1,357 @@
+<template>
+	<!-- <template> 
+		<lightning-spinner if:true={showSpinner} alternative-text="Loading" size="medium" variant="brand">
+		</lightning-spinner>
+	</template> -->
+	<template if:true={isShowToast}>
+        <div class="slds-notify_container slds-is-sticky">
+            <div class="slds-notify slds-notify_toast slds-theme_success" role="status">
+                <span class="slds-assistive-text">{toastVariant}</span>
+                <span
+                        class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top"
+                        title="Description of icon when needed">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#success"></use>
+                    </svg>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small ">{toastTitle}<br />
+                    </h2>
+                    <h3>{toastMessage}</h3>
+                </div>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+                            onclick={closeToast}>
+                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#close"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+	<template if:true={showSpinner}>
+		<lightning-spinner alternative-text="Loading" size="medium" variant="brand">
+		</lightning-spinner>
+	</template>
+	<template if:true={isModalOpen}>
+		<!-- Modal/Popup Box LWC starts here -->
+		<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+			aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<!-- Modal/Popup Box LWC header here -->
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close"
+                                            alternative-text="close"
+                                            variant="inverse"
+                                            size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+					<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete Report(s)</h2>
+				</header>
+				<!-- Modal/Popup Box LWC body starts here -->
+				<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+					<p><b>Are you sure you want to delete the report(s)? Deleting multiple reports could take a few minutes.</b>
+					</p>
+				</div>
+				<!-- Modal/Popup Box LWC footer starts here -->
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" onclick={closeModal} title="No">No</button>
+					<button class="slds-button slds-button_brand" onclick={submitDetails} title="Yes">Yes</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+	<lightning-card variant="Narrow" title="Profilt & Loss Reports" icon-name="standard:insights">
+		<lightning-breadcrumbs class="slds-p-left_medium">
+			<lightning-breadcrumb label="Back to report list" onclick={handleTabChange}>
+			</lightning-breadcrumb>
+		</lightning-breadcrumbs>
+		<div class="slds-grid slds-wrap slds-p-left_medium">
+			<div class="slds-grid slds-size_1-of-1">
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="reportPeriod"
+					label="Report Period" placeholder="This-year-to-date" options={reportPeriodOption}
+					onchange={handlePeriodChange}>
+				</lightning-combobox>
+			</div>
+			<div class="slds-grid slds-size_1-of-1">
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="displayColumn"
+					label="Display columns by" placeholder="Total Only" options={displayColumnOptionPL}
+					onchange={handleDiplayColmunByChange}></lightning-combobox>
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="progress"
+					label="Show non-zero or active only" placeholder="Active rows/active columns"
+					options={reportPeriodOption} onchange={handleChange}></lightning-combobox>
+				<lightning-combobox class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5" name="progress"
+					label="Compare another period" placeholder="Select period" options={reportPeriodOption}
+					onchange={handleChange}></lightning-combobox>
+				<lightning-button class="slds-p-around_medium slds-p-bottom_none slds-size_1-of-5 slds-m-top_large"
+					variant="neutral" label="Run Report" title="titleName" onclick={handleRunReport}></lightning-button>
+			</div>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>Type</th>
+					<template for:each={columnData} for:item="column">
+					<th key={column}>{column}</th>
+					</template>
+				</tr>
+			</thead>
+		<tbody>
+		<template for:each={reportData} for:item="mapItem" for:index="index">
+			<!-- <section key={mapItem.type}> -->
+				<!-- <div  key={mapItem.type}> -->
+				<tr key={mapItem.type}  data-index={index} data-type={mapItem.type} onclick={displayChild}>
+					<td>
+						    <lightning-icon icon-name="utility:right" variant="minimize_window" size="x-small"></lightning-icon>
+							<b class={collapsibleClass}>{mapItem.type}</b> 
+					</td>
+				</tr>
+				<!-- <h2>{mapItem.type}</h2> -->
+				<template if:true = {mapItem.showData} key={mapItem.type} for:each={mapItem.subTypeWrapperList} for:item="mapItemInner1">
+					<!-- <section key={mapItemInner1.type}> -->
+						<!-- <h2 class="no-break">{mapItemInner1.type}</h2> -->
+							<!-- <table  key={mapItemInner1.type}> -->
+							<!-- <thead key={index}>
+								<tr>
+									<th>{mapItem[1][0].RowLabel}</th>
+								</tr>
+							</thead> -->
+								<!-- <tbody> -->
+										<tr key={mapItemInner1.type}>
+											<td>{mapItemInner1.type}</td>
+											<template for:each={mapItemInner1.financialDataList} for:item="finData">
+											<td key={finData.RowLabel}>{finData.Amount}</td>
+											</template>
+										</tr>
+								<!-- </tbody>
+							</table> -->
+					<!-- </section> -->
+				</template>
+				<!-- </div> -->
+			</template>
+		</tbody>
+		</table>
+		<!-- <c-as-report-detail frr-id={recordId}></c-as-report-detail> -->
+		<!-- <lightning-card class="slds-border_top slds-border_right slds-border_bottom slds-border_left tab-container"
+			title="Reports">
+			<div class="slds-p-around_medium">
+				<lightning-button label="Delete Reports" title="Neutral action" onclick={deleteSelectedRecords}>
+				</lightning-button>
+			</div>
+			<div style="overflow-x: auto; overflow-y:auto;height: 300px;">
+				
+
+				<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped"
+					aria-label="Example table of Opportunities with striped rows">
+					<thead>
+						<tr class="slds-line-height_reset">
+							<th class="" scope="col">
+								<div style="width: auto;">
+									<lightning-input type="checkbox" onchange={allSelected}>
+									</lightning-input>
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="View Report">
+									View Report
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Ledger">
+									Ledger
+								</div>
+							</th>
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Start Period">
+									Currency
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Start Period">
+									Start Period
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="End Period">
+									End Period
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="GL Variable 1">
+									GL Variable 1
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="GL Variable 2">
+									GL Variable 2
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="GL Variable 3">
+									GL Variable 3
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="GL Variable 4">
+									GL Variable 4
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Status">
+									Status
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Completed Date/Time">
+									Completed Date/Time
+								</div>
+							</th>
+
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Created By">
+									Created By
+								</div>
+							</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<template for:each={StandardReportRows} for:item="row" for:index="ind">
+							<tr class="slds-hint-parent" key={index}>
+								<td data-label=''>
+									<div class="slds-truncate" title="">
+										<lightning-input type="checkbox" checked={allCheck} value={row.fRRName}
+											data-id={row.fRRId}>
+										</lightning-input>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.fRRName}>
+
+										<template if:false={row.isImage}>
+											<a data-type="reportId" data-id={row.fRRId} data-frr-id={row.fRRId}
+												onclick={handleColumnClick}>
+												{row.fRRName}
+											</a>
+
+										</template>
+										<template if:true={row.isImage}>
+											{row.fRRName}
+										</template>
+									</div>
+
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.legderName}>
+										<a onclick={openIdLink} data-legerid={row.legderId} target="_blank">
+											{row.legderName}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.currencyType}>
+										{row.currencyType}
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.startPeriod}>
+										<a onclick={openIdLink} data-legerid={row.accountingPeriodId} target="_blank">
+											{row.startPeriod}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.endPeriod}>
+										<a onclick={openIdLink} data-legerid={row.accountingPeriodId} target="_blank">
+											{row.endPeriod}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.glVar1}>
+										<a>
+											{row.glVar1}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.glVar2}>
+										<a>
+											{row.glVar2}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.glVar3}>
+										<a>
+											{row.glVar3}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.glVar4}>
+										<a>
+											{row.glVar4}
+										</a>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.status}>
+										<template if:true={row.isImage}>
+											<img style="width: 21PX; height: auto;margin-right: 5px;"
+                                                src="https://gfacctdev-dev-ed--gferp.vf.force.com/resource/1661644174000/GFERP__loadingGif?">
+                                        Running
+                                    </template>
+
+											<template if:false={row.isImage}>
+												{row.status}
+											</template>
+									</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.completedDateTime}>
+										{row.completedDateTime}</div>
+								</td>
+
+								<td data-label=''>
+									<div class="slds-truncate" title={row.createdBy}>
+										<a onclick={openIdLink} data-legerid={row.createdById} target="_blank">
+											{row.createdBy}
+										</a>
+									</div>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+
+			</div>
+		</lightning-card> -->
+	</lightning-card>
+	
+</template>

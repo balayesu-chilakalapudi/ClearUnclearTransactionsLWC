@@ -1,0 +1,297 @@
+<template>
+    <!--<lightning-datatable key-field="id" data={dataList} row-number-offset={rowOffset} columns={columnsList}>
+    </lightning-datatable>-->
+    <div style="margin:0.3% 1%">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-12">
+                <p>               
+                    <a onclick={handleClearAll}>
+                        <template if:true={clear_operation_title}>
+                            <lightning-button-icon icon-name="utility:success" variant="bare"
+                                size="large" alternative-text="Cleared" title="Cleared"
+                                ></lightning-button-icon>
+                        </template>
+                        <template if:false={clear_operation_title}>
+                            <lightning-button-icon icon-name="utility:add" variant="bare"
+                                size="large" alternative-text="Un Cleared" title="Uncleared"
+                                ></lightning-button-icon>
+                        </template>
+                        &nbsp;{clear_unclear_operation_title}
+                    </a>
+                    &nbsp;&nbsp;&nbsp;
+                    <a onclick={handleFilter}>Filter</a>
+                    &nbsp;&nbsp;&nbsp;
+                    <a href="https://help.goldfinchcloudsolutions.com/goldfinch/month-end-routines" target="_blank">Help</a>
+            
+                </p>
+            </div>
+            <div class="slds-col slds-size_11-of-12">
+                <c-reconciliation-calculation  object-api-name="Bank_Reconciliation__c" record-id={recordId}></c-reconciliation-calculation>
+            </div>
+        </div>
+    
+    <template if:true={showSearchByLabel}>
+       &nbsp; <lightning-pill label={SearchByLabel} onremove={handleSearchByLabelRemove}></lightning-pill>
+    </template>  
+    <template if:true={showClearByLabel}>
+       &nbsp; <lightning-pill label={ClearByLabel} onremove={handleClearByLabelRemove}></lightning-pill>
+    </template>  
+     <template if:true={showFromDateLabel}>
+       &nbsp; <lightning-pill label={FromDateLabel} onremove={handleFromDateLabelRemove}></lightning-pill>
+    </template>  
+    <template if:true={showToDateLabel}>
+       &nbsp; <lightning-pill label={ToDateLabel} onremove={handleToDateLabelRemove}></lightning-pill>
+    </template>  
+     <template if:true={showDocumentTypeLabel}>
+       &nbsp; <lightning-pill label={DocumentTypeLabel} onremove={handleDocumentTypeLabelRemove}></lightning-pill>
+    </template>
+    <template if:true={showMinAmountLabel}>
+       &nbsp; <lightning-pill label={MinAmountLabel} onremove={handleMinAmountLabelRemove}></lightning-pill>
+    </template> 
+    <template if:true={showMaxAmountLabel}>
+       &nbsp; <lightning-pill label={MaxAmountLabel} onremove={handleMaxAmountLabelRemove}></lightning-pill>
+    </template>   
+    <br />    
+    </div>    
+    <template if:true={show_spinner}>
+        <div class="slds-is-relative">
+            <br /><br />
+            <lightning-spinner alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
+            <br /><br />
+        </div>
+    </template>
+    <template if:false={show_spinner}>
+         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>                        
+                       Cleared                        
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col">
+                        <div data-id="GFERP__Document_Date__c" onclick={sort}>
+                            Date 
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={dateUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={dateDWBool}></lightning-icon>
+                        </div>                                          
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>
+                        <div data-id="GFERP__Due_Date__c" onclick={sort}>
+                            Bank Transaction Date
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={BankTransactionUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={BankTransactionDWBool}></lightning-icon>                     
+                        </div>
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>
+                        <div data-id="GFERP__Amount__c" onclick={sort}>                                   
+                            Amount
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={AmountUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={AmountDWBool}></lightning-icon>
+                        </div>
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>
+                        <div data-id="GFERP__Amount__c" >                                
+                            Ledger Amount
+                            <!--
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={LedgerAmountUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={LedgerAmountDWBool}></lightning-icon>
+                            -->                   
+                        </div>
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>
+                        <div data-id="Name" onclick={sort}>
+                            Source Link
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={SourceLinkUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={SourceLinkDWBool}></lightning-icon>  
+                        </div>
+                        </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}> 
+                        <div data-id="GFERP__Document_Type__c" onclick={sort}>
+                            Type
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={TypeUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={TypeDWBool}></lightning-icon> 
+                        </div>
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}> 
+                        <div data-id="Customer_Payee__c">
+                            Ref
+                            <!--
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={RefUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={RefDWBool}></lightning-icon> 
+                            -->                       
+                        </div>
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>
+                        <div data-id="Customer_Payee__c" onclick={sort}>
+                            Payee
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={PayeeUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={PayeeDWBool}></lightning-icon>
+                        </div>
+                    </th>
+                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style={fixedWidth}>
+                        <div data-id="GFERP__Description__c" onclick={sort}>
+                            Description
+                            <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={DescriptionUpBool}></lightning-icon>
+                            <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={DescriptionDWBool}></lightning-icon>                        
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template if:true={GFERP__GL_EntryList}>
+                    <template for:each={GFERP__GL_EntryList} for:item="ct">
+                        <tr key={ct.Id} class="slds-line-height_reset">
+                            <td scope="col">
+                                <template if:true={ct.Cleared__c}>
+                                    <lightning-button-icon icon-name="utility:success" id={ct.Id} variant="bare"
+                                        size="large" alternative-text="Cleared" title="Cleared"
+                                        onclick={handleRemoveClick}></lightning-button-icon>
+                                </template>
+                                <template if:false={ct.Cleared__c}>
+                                    <lightning-button-icon icon-name="utility:add" id={ct.Id} variant="bare"
+                                        size="large" alternative-text="Un Cleared" title="Un Cleared"
+                                        onclick={handleAddClick}></lightning-button-icon>
+                                </template>
+                            </td>
+                            <td scope="col">                                
+                                    {ct.GFERP__Document_Date__c}
+                            </td>
+                            <td scope="col">                                
+                                    {ct.GFERP__Due_Date__c}
+                            </td>
+                            <td scope="col">
+                                {ct.GFERP__Amount__c}
+                            </td>
+                            <td scope="col">
+                                    {ct.GFERP__Amount__c}
+                            </td>
+                            <td scope="col">                                
+                                <a id={ct.Id} onclick={openGLEntry}>{ct.Name}</a>
+                            </td>
+                            <td scope="col">
+                                    {ct.GFERP__Document_Type__c}
+                            </td>
+                            <td scope="col">                               
+                                    {ct.Customer_Payee__c}
+                            </td>
+                            <td scope="col">                                
+                                <template if:true={ct.GFERP__GL_Account__c}>
+                                    <a id={ct.GFERP__GL_Account__c}
+                                        onclick={openGLAccount}>{ct.GFERP__GL_Account__r.Name}</a>
+                                </template>
+                            </td>
+                            <td scope="col">{ct.GFERP__Description__c}</td>
+                        </tr>
+                    </template>
+                </template>
+            </tbody>
+        </table>
+    -->
+        <!-- modal showCongaSavePrintDialog start -->
+        <template if:true={show_clear_unclear_dialog}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container" style="width:50% !important">
+                    <!-- modal header start -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={handle_clear_unclear_operation_no}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="conga-modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                            {clear_unclear_operation_title}</h2>
+                    </header>
+                    <!-- modal body start -->
+                    <div class="slds-modal__content slds-p-around_medium" id="conga-modal-content-id-1">
+                        <center><b>Are you sure you want to {clear_unclear_operation_title} the records on this page?</b></center>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral"
+                            onclick={handle_clear_unclear_operation_no}>No</button>
+                        <button class="slds-button slds-button_brand"
+                            onclick={handle_clear_unclear_operation_yes}>Yes</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        <!-- modal showCongaSavePrintDialog end -->
+        <!-- modal showFilterDialog start -->
+        <template if:true={showFilterDialog}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="filter-modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container" style="width:50% !important">
+                    <!-- modal header start -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={cancelCongaDialog}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="filter-modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Filter</h2>
+                    </header>
+                    <!-- modal body start -->
+                    <div class="slds-modal__content slds-p-around_medium" id="filter-modal-content-id-1">
+                        <lightning-record-edit-form object-api-name="GFERP__GL_Entry__c">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-1" style="padding:0.1%;text-align:left">
+                                    <lightning-input placeholder="Search by Ref, Desc or Payee..."
+                                        onchange={readSearchByRefDescPayee}></lightning-input>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-1" style="padding:0.1%;text-align:left">
+                                    <lightning-input-field field-name="Cleared_Uncleared__c" variant="label-stacked"
+                                         onchange={readCleared_Uncleared}></lightning-input-field>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2" style="padding:0.1%;text-align:left">
+                                    From Date<br />
+                                    <lightning-input-field field-name="GFERP__Document_Date__c" variant="label-hidden"
+                                         onchange={readDocFromDate}></lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2" style="padding:0.1%;text-align:left">                                
+                                    To Date<br />
+                                    <lightning-input-field field-name="GFERP__Document_Date__c" variant="label-hidden"
+                                         onchange={readDocToDate}></lightning-input-field>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-1" style="padding:0.1%;text-align:left">
+                                    <lightning-input-field field-name="GFERP__Document_Type__c" variant="label-stacked"
+                                         onchange={readAccountType}></lightning-input-field>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2" style="padding:0.1%;text-align:left">
+                                    Min Amount<br />
+                                    <lightning-input-field field-name="GFERP__Amount__c" variant="label-hidden" aria-placeholder="Min"
+                                         onchange={readFromAmount}></lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2" style="padding:0.1%;text-align:left">
+                                    Max Amount<br />
+                                    <lightning-input-field field-name="GFERP__Amount__c" variant="label-hidden" aria-placeholder="Max"
+                                         onchange={readToAmount}></lightning-input-field>
+                                </div>
+                            </div>
+                        </lightning-record-edit-form>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={filter_cancel}>Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={filter_apply}>Apply</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        <!-- modal showCongaSavePrintDialog end -->
+    </template><!-- spinner end-->
+</template>

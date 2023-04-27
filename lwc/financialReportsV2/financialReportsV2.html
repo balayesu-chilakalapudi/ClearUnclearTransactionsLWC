@@ -1,0 +1,113 @@
+<template>
+	<lightning-card variant="Narrow" title="Financial Reports" icon-name="standard:insights">
+		<lightning-tabset active-tab-value="standard">
+			<lightning-tab label="Standard" value="standard">
+				<lightning-accordion class="slds-p-left_medium" allow-multiple-sections-open
+					active-section-name='business'>
+					<lightning-accordion-section name="business" label="Business Overview">
+                        <div class="slds-grid slds-size_1-of-1">
+                            <div class="slds-vertical-tabs slds-size_1-of-2">
+                                <ul class="slds-m-horizontal_xx-large slds-vertical-tabs__nav slds-size_1-of-1"
+                                    role="tablist" aria-orientation="vertical">
+                                    <template for:each={financialRepType} for:item="financeRep">
+                                        <li class="slds-vertical-tabs__nav-item" title={financeRep.reportTypeName} role="presentation" onclick={handleTabChange} key={financeRep.reportTypeName}>
+                                            <p class="slds-vertical-tabs__link" href="#" role="tab" tabindex="0"
+                                                aria-selected="true" aria-controls="slds-vertical-tabs-0" id="profit_loss">
+                                                <span class="slds-vertical-tabs__left-icon">
+                                                </span>
+                                                <span class="slds-truncate" title={financeRep.reportTypeName}>{financeRep.reportTypeName}</span>
+                                            </p>
+                                            <span class="slds-vertical-tabs__right-icon">
+                                                <input data-name={financeRep.reportTypeName} class='star' id='profitStar' checked={_checked} type="checkbox" onchange={onchange}/>
+                                                    <label for='profitStar'>
+                                                </label>
+                                            </span>
+                                        </li>
+                                    </template>
+                                    <!--
+                                        <li class="slds-vertical-tabs__nav-item" title="Profit & Loss" role="presentation" onclick={handleTabChange}>
+                                        <p class="slds-vertical-tabs__link" href="#" role="tab" tabindex="0"
+                                            aria-selected="true" aria-controls="slds-vertical-tabs-0" id="profit_loss">
+                                            <span class="slds-vertical-tabs__left-icon">
+                                            </span>
+                                            <span class="slds-truncate" title="Profit & Loss">Profit & Loss</span>
+                                        </p>
+                                        <span class="slds-vertical-tabs__right-icon">
+                                            <input data-name="Profit & Loss" class='star' id='profitStar' checked={_checked} type="checkbox" onchange={onchange}/>
+                                                <label for='profitStar'>
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li class="slds-vertical-tabs__nav-item" title="Balance Sheet" role="presentation">
+                                        <p class="slds-vertical-tabs__link" href="#" role="tab" tabindex="-1"
+                                            aria-selected="false" aria-controls="slds-vertical-tabs-1" id="balance_sheet">
+                                            <span class="slds-vertical-tabs__left-icon">
+                                            </span>
+                                            <span class="slds-truncate" title="Balance Sheet">Balance Sheet</span>
+                                            <span class="slds-vertical-tabs__right-icon">
+                                            </span>
+                                        </p>
+                                        <span class="slds-vertical-tabs__right-icon">
+                                            <input data-name="Balance Sheet" class='star' id='balanceStar' checked={_checked} type="checkbox" onchange={onchange}/>
+                                                <label for='balanceStar'>
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li class="slds-vertical-tabs__nav-item" title="Trial Balance" role="presentation">
+                                        <p class="slds-vertical-tabs__link" href="#" role="tab" tabindex="-1"
+                                            aria-selected="false" aria-controls="slds-vertical-tabs-2" id="trial_balance">
+                                            <span class="slds-vertical-tabs__left-icon">
+                                            </span>
+                                            <span class="slds-truncate" title="Trial Balance">Trial Balance</span>
+                                            <span class="slds-vertical-tabs__right-icon"></span>
+                                        </p>
+                                        <span class="slds-vertical-tabs__right-icon">
+                                            <input data-name="Trial Balance" class='star' id='trialStar' checked={_checked} type="checkbox" onchange={onchange}/>
+                                                <label for='trialStar'>
+                                            </label>
+                                        </span>
+                                    </li>
+                                    -->
+                                </ul>
+                            </div>
+                            <div class="slds-size_1-of-2">
+                                <ul class="slds-m-horizontal_xx-large">
+                                    <li class="slds-p-around_x-small">
+                                        <lightning-button-menu alternative-text="Show menu" variant="container">
+                                            <lightning-menu-item value="MenuItemOne" label="Menu Item One"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemTwo" label="Menu Item Two"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemThree" label="Menu Item Three"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemFour" label="Menu Item Four"></lightning-menu-item>
+                                        </lightning-button-menu>
+                                    </li>
+                                    <!--<li class="slds-p-around_x-small">
+                                        <lightning-button-menu alternative-text="Show menu" variant="container">
+                                            <lightning-menu-item value="MenuItemOne" label="Menu Item One"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemTwo" label="Menu Item Two"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemThree" label="Menu Item Three"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemFour" label="Menu Item Four"></lightning-menu-item>
+                                        </lightning-button-menu>
+                                    </li>
+                                    <li class="slds-p-around_x-small">
+                                        <lightning-button-menu alternative-text="Show menu" variant="container">
+                                            <lightning-menu-item value="MenuItemOne" label="Menu Item One"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemTwo" label="Menu Item Two"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemThree" label="Menu Item Three"></lightning-menu-item>
+                                            <lightning-menu-item value="MenuItemFour" label="Menu Item Four"></lightning-menu-item>
+                                        </lightning-button-menu>
+                                    </li>-->
+                                </ul>
+                            </div>
+                        </div>
+					</lightning-accordion-section>
+				</lightning-accordion>
+			</lightning-tab>
+			<lightning-tab label="Custom reports" value="custom">
+
+			</lightning-tab>
+			<lightning-tab label="Management reports" value="management">
+
+			</lightning-tab>
+		</lightning-tabset>
+	</lightning-card>
+</template>
